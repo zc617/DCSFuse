@@ -9,21 +9,21 @@ import os
 
 
 def corr_fun(Kernel_tmp, Feature):
-    size = Kernel_tmp.size()  # size:4
+    size = Kernel_tmp.size()  
     CORR = []
     Kernel = []
     for i in range(Feature.shape[0]):
-        ker = Kernel_tmp[i:i + 1]  # 1, 16, 32, 32
+        ker = Kernel_tmp[i:i + 1]  
         fea = Feature[i:i + 1]
-        ker = ker.view(size[1], size[2] * size[3]).transpose(0, 1) #  ker(1024, 16)
-        ker = ker.unsqueeze(2).unsqueeze(3) # ker(1024, 16, 1, 1)
+        ker = ker.view(size[1], size[2] * size[3]).transpose(0, 1) 
+        ker = ker.unsqueeze(2).unsqueeze(3) 
 
-        co = F.conv2d(fea, ker.contiguous())  # co(1, 1024, 128, 128)
+        co = F.conv2d(fea, ker.contiguous())  
         CORR.append(co)
-        ker = ker.unsqueeze(0)  # ker(1, 1024, 16, 1, 1)
+        ker = ker.unsqueeze(0)  
         Kernel.append(ker)
-    corr = torch.cat(CORR, 0)  # corr(1, 1024, 128, 128)
-    Kernel = torch.cat(Kernel, 0) # Kernel(1, 1024, 16, 1, 1)
+    corr = torch.cat(CORR, 0)  
+    Kernel = torch.cat(Kernel, 0) 
     return corr, Kernel
 
 corr_size = 16  #

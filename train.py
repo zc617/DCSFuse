@@ -70,7 +70,7 @@ if __name__ == "__main__":
         if epoch % 10 == 1:
            opt.lr=0.1*opt.lr
         net.train()
-        # train_tqdm = tqdm(dataloader, total=len(dataloader))  # 进度条
+        # train_tqdm = tqdm(dataloader, total=len(dataloader))
         for index, data in enumerate(dataloader):
 
             nc, c, h, w = data[0].size()

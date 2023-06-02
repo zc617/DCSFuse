@@ -19,7 +19,6 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "1, 2, 3"
 parser = argparse.ArgumentParser()
 parser.add_argument("--infrared_dataroot", default="RoadScene_test/ir/", type=str)
 parser.add_argument("--visible_dataroot", default="RoadScene_test/vi/", type=str)
-parser.add_argument("--batch_size", type=int, default=1)
 parser.add_argument("--output_root", default="./outputs/", type=str)
 parser.add_argument("--checkpoint_dir", type=str, default="checkpoints/")
 
@@ -38,8 +37,6 @@ if __name__ == "__main__":
     dirname_ir = os.listdir(opt.infrared_dataroot)
     dirname_vi = os.listdir(opt.visible_dataroot)
     tmp_len = len(dirname_ir)
-    # if tmp_len >= 50 :
-    #     tmp_len = 50
     with torch.no_grad():
         t = []
         for i in range(tmp_len):

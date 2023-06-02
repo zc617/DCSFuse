@@ -13,9 +13,6 @@ import re
 from uitils import *
 import matplotlib.pyplot as plt
 
-# os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
-# device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
 
 def toString(num):
     string = str(num)
@@ -37,16 +34,12 @@ class ImageDataset(Dataset):
     
         for item in os.listdir(os.path.join(self.infrared_dataroot)):
 
-            # print('It is now processing {} !'.format(item))
             ir_img_dir = self.infrared_dataroot
-            # print(ir_img_dir)
             ir_image_list = os.listdir(os.path.join(self.infrared_dataroot))
             ir_image_list.sort(key=lambda x: str(re.split('\.|\_', x)[1]))
-            # print('ir_image_list', source_image_list)
             vis_img_dir = self.visible_dataroot
             vis_image_list = os.listdir(os.path.join(self.visible_dataroot))
             vis_image_list.sort(key=lambda x: str(re.split('\.|\_', x)[1]))
-            # print('vis_image_list',vis_image_list)
             tmp_len = len(vis_image_list) - 1
         for i in range(tmp_len):
             ir_img = os.path.join(ir_img_dir, ir_image_list[i])
