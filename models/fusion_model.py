@@ -6,8 +6,7 @@ import os
 
 
 
-# os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
-# device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 
 def corr_fun(Kernel_tmp, Feature):
     size = Kernel_tmp.size()  # size:4
@@ -16,7 +15,7 @@ def corr_fun(Kernel_tmp, Feature):
     for i in range(Feature.shape[0]):
         ker = Kernel_tmp[i:i + 1]  # 1, 16, 32, 32
         fea = Feature[i:i + 1]
-        ker = ker.view(size[1], size[2] * size[3]).transpose(0, 1) # 维度处理 ker(1024, 16)
+        ker = ker.view(size[1], size[2] * size[3]).transpose(0, 1) #  ker(1024, 16)
         ker = ker.unsqueeze(2).unsqueeze(3) # ker(1024, 16, 1, 1)
 
         co = F.conv2d(fea, ker.contiguous())  # co(1, 1024, 128, 128)
@@ -27,7 +26,7 @@ def corr_fun(Kernel_tmp, Feature):
     Kernel = torch.cat(Kernel, 0) # Kernel(1, 1024, 16, 1, 1)
     return corr, Kernel
 
-corr_size = 16  #    32 的数据
+corr_size = 16  #
 
 class CorrelationLayer(nn.Module):
     def __init__(self, feat_channel):
@@ -35,8 +34,8 @@ class CorrelationLayer(nn.Module):
 
         self.pool_layer = nn.AdaptiveAvgPool2d((corr_size, corr_size))
 
-        self.corr_reduce = nn.Sequential(     # 降维到 feat_channe
-            nn.Conv2d(corr_size * corr_size, feat_channel, kernel_size=1), # 1*1的卷积
+        self.corr_reduce = nn.Sequential(     
+            nn.Conv2d(corr_size * corr_size, feat_channel, kernel_size=1), 
             nn.InstanceNorm2d(feat_channel),
             nn.ReLU(),
             nn.Conv2d(feat_channel, feat_channel, kernel_size=3, padding=1),
@@ -45,17 +44,17 @@ class CorrelationLayer(nn.Module):
 
     def forward(self, F_infrared, F_visible):  #
         # calculate correlation map
-        VIS_feat_downsize = self.pool_layer(F_visible)  # VIS_feat_downsize(1, feat_channel, 32, 32)
-        VIS_feat_norm = F.normalize(F_visible)   #(1, feat_channel, 128, 128)
+        VIS_feat_downsize = self.pool_layer(F_visible)  
+        VIS_feat_norm = F.normalize(F_visible)   
         VIS_corr, _ = corr_fun(VIS_feat_downsize, VIS_feat_norm)
-        VIS_corr = self.corr_reduce(VIS_corr)  # VIS_corr(1, feat_channel, 128, 128)
+        VIS_corr = self.corr_reduce(VIS_corr) 
 
         IR_feat_downsize = self.pool_layer(F_infrared)
         IR_feat_norm = F.normalize(F_infrared)
         IR_corr, _ = corr_fun(IR_feat_downsize, IR_feat_norm)
         IR_corr = self.corr_reduce(IR_corr)
 
-        return IR_corr, VIS_corr  # VIS_corr(1, feat_channel, 128, 128)
+        return IR_corr, VIS_corr  
 
 class  Feature_extraction(nn.Module):
     def __init__(self):
@@ -164,10 +163,7 @@ class FusionNet(nn.Module):
 
         disp_ir_feature = ir_feature
         disp_vis_feature = vis_feature
-        # corr_ir_pool = self.adp_pool(torch.sigmoid(corr_ir))
-        # corr_vis_pool = self.adp_pool(torch.sigmoid(corr_vis))
-
-
+   
         #
         ir_feature, vis_feature = cross_funtion(corr_ir, corr_vis, ir_feature, vis_feature)
 

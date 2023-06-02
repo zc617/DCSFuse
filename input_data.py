@@ -34,7 +34,7 @@ class ImageDataset(Dataset):
         self.visible_dataroot = visible_dataroot
         self.image_size = image_size
         self.total_image = []
-        # print(os.listdir(os.path.join(self.infrared_dataroot)))
+    
         for item in os.listdir(os.path.join(self.infrared_dataroot)):
 
             # print('It is now processing {} !'.format(item))
@@ -48,11 +48,11 @@ class ImageDataset(Dataset):
             vis_image_list.sort(key=lambda x: str(re.split('\.|\_', x)[1]))
             # print('vis_image_list',vis_image_list)
             tmp_len = len(vis_image_list) - 1
-            for i in range(tmp_len):
-                ir_img = os.path.join(ir_img_dir, ir_image_list[i])
-                vis_img = os.path.join(vis_img_dir, vis_image_list[i])
-                tmp_image = (ir_img, vis_img)
-                self.total_image.append(tmp_image)
+        for i in range(tmp_len):
+            ir_img = os.path.join(ir_img_dir, ir_image_list[i])
+            vis_img = os.path.join(vis_img_dir, vis_image_list[i])
+            tmp_image = (ir_img, vis_img)
+            self.total_image.append(tmp_image)
         self.lens = len(self.total_image)
         self.transform = transforms.Compose([
             transforms.CenterCrop(self.image_size), #crop images
@@ -69,20 +69,19 @@ class ImageDataset(Dataset):
         """
         ir_path1 = self.total_image[i][0]
         vis_path2 = self.total_image[i][1]
-        # print('backward_flow_path ',backward_flow_path)
-        # print('consistency_path ',consistency_path)
+    
         ir_img1 = Image.open(ir_path1).convert('L')
         vis_img2 = Image.open(vis_path2).convert('L')
 
         ir_img1 = self.transform(ir_img1)
         vis_img2 = self.transform(vis_img2)
-        # vis_img2, vis_cb_img2, vis_cr_img2 = RGB2YCrCb(vis_img2)
+  
         return (ir_img1, vis_img2)
 
 
 if __name__ == "__main__":
-    ir_root="/data/infrared/cc/data/TNO_Train/ir/"
-    vi_root="/data/infrared/cc/data/TNO_Train/vi/"
+    ir_root="./TNO_Train/ir/"
+    vi_root="./TNO_Train/vi/"
     image = ImageDataset(ir_root, vi_root,[128,128])
     print('data lens', len(image))
     dataloader = torch.utils.data.DataLoader(image, batch_size=1)

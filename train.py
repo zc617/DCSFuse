@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 
 
 
-# tensorboard --logdir=runs --port=6017
+
 
 def hook_func(module, input):
     x = input[0][0]
@@ -36,8 +36,8 @@ plt.rcParams['font.family'] = ['serif']
 plt.rcParams['font.sans-serif'] = ['Times New Roman']
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--infrared_dataroot", default="/data/infrared/cc/data/TNO_Train_2/ir/", type=str)
-parser.add_argument("--visible_dataroot", default="/data/infrared/cc/data/TNO_Train_2/vi/", type=str)
+parser.add_argument("--infrared_dataroot", default="./data/TNO_Train_2/ir/", type=str)
+parser.add_argument("--visible_dataroot", default="./data/TNO_Train_2/vi/", type=str)
 parser.add_argument("--batch_size", type=int, default=8)
 parser.add_argument("--image_size", type=int, default=[128, 128])
 parser.add_argument("--epoch", type=int, default= 80)
@@ -102,56 +102,8 @@ if __name__ == "__main__":
             writer.add_images('IR_images', infrared, dataformats='NCHW')
             writer.add_images('VIS_images', visible, dataformats='NCHW')
             writer.add_images('Fusion_images', fused_img, dataformats='NCHW')
-            # for name, m in net.named_modules():
-            #     if isinstance(m, torch.nn.Conv2d):
-            #         m.register_forward_pre_hook(hook_func)
-            # net(infrared, visible)
-            # m.register_forward_pre_hook(hook_func).remove()
-            corr_ir = torch.reshape(corr_ir, (-1, 1, 128, 128))
-            corr_vis = torch.reshape(corr_vis, (-1, 1, 128, 128))
+       
 
-            image_corr_ir = corr_ir.cpu().detach().numpy()
-            image_corr_vis = corr_vis.cpu().detach().numpy()
-
-            # plt.figure(figsize=(6.4, 4.8))
-            disp_feature_image(infrared, 'img', 3, 1, 'IR_img')
-            disp_feature_image(disp_ir_feature, 'feature', 3, 2, 'IR_Feature')
-            disp_feature_image(image_corr_ir, 'cor', 3, 3, 'IR_Corr')
-            disp_feature_image(visible, 'img', 3, 4, 'VIS_img')
-            disp_feature_image(disp_vis_feature, 'feature', 3, 5, 'VIS_Feature')
-            disp_feature_image(image_corr_vis, 'cor', 3, 6, 'VIS_Corr')
-            plt.savefig('./outputs/' + 'corr' + str(epoch)+ '.png', bbox_inches='tight',pad_inches=0.0)
-            # plt.figure(figsize=(3, 6))
-            # disp_feature_image(disp_ir_feature, 'feature', 1, 1, 'IR_Feature')
-            # disp_feature_image(disp_vis_feature, 'feature', 1, 2, 'VIS_Feature')
-            #
-            # plt.savefig('./outputs/' + 'feature' + '.png', bbox_inches='tight')
-            # plt.show()
-            # plt.figure(figsize=(3, 4))
-            # draw_features(128, 128, image_corr_ir)
-            # plt.axis('off')
-            # plt.title('IR_Corr', fontsize=12, y=-0.10)
-            # plt.margins(0, 0)
-            # plt.savefig('./outputs/' + 'cor_ir' + '.png', bbox_inches='tight')
-            # plt.show()
-            # plt.figure(figsize=(3, 4))
-            # draw_features(128, 128, image_corr_vis)
-            # plt.axis('off')
-            # plt.title('VIS_Corr', fontsize=12, y=-0.10)
-            # plt.margins(0, 0)
-            # plt.savefig('./outputs/' + 'cor_vis' + '.png', bbox_inches='tight')
-            # kk = 2.56
-            # kk2 = 2.56
-            # disp_image(infrared, 'img', kk, kk2)
-            # disp_image(visible, 'img', kk, kk2)
-            # disp_image(disp_ir_feature, 'feature', kk, kk2)
-            # disp_image(disp_vis_feature, 'feature', kk, kk2)
-            # disp_image(image_corr_ir, 'cor', kk, kk2)
-            # disp_image(image_corr_vis, 'cor', kk, kk2)
-            # disp_image(fused_img, 'img', kk, kk2)
-
-            plt.show()
-            plt.close()
     writer.close()
-    # torch.save(net.state_dict(), './checkpoints/fusion_grad_cross_new_'+str(epoch+1)+'.pth'.format(opt.lr, log_file[2:]))
+    torch.save(net.state_dict(), './checkpoints/fusion_grad_cross_new_'+str(epoch+1)+'.pth'.format(opt.lr, log_file[2:]))
     print('training is complete!')
